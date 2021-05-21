@@ -23,16 +23,58 @@ BRICK_START_Y = 50
 BRICK_HEIGHT = 20
 BRICK_WIDTH = (CANVAS_WIDTH - (N_COLS+1) * SPACING) / N_COLS
 
-# Constants for the ball and paddle
+# Constants for the ball
 BALL_SIZE = 40
+CHANGE_X_START = 10
+CHANGE_Y_START = 7
+
+# Constants for the paddle
 PADDLE_Y = CANVAS_HEIGHT - 40
 PADDLE_WIDTH = 80
 
 def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, "J's Brick Breaker")
-    #
+
+    # Ball
+    ball = canvas.create_oval(0, 0, BALL_SIZE, BALL_SIZE, fill='green', outline='green')
+    change_x = CHANGE_X_START
+    change_y = CHANGE_Y_START
+    while True:
+        # update world
+        canvas.move(ball, change_x, change_y)
+        if hit_left_wall(canvas, ball) or hit_right_wall(canvas, ball):
+            change_x *= -1
+        if hit_top_wall(canvas, ball) or hit_bottom_wall(canvas, ball):
+            change_y *= -1
+        # redraw canvas
+        canvas.update()
+        # pause
+        time.sleep(1 / 50)
+
     canvas.mainloop()
 
+def make_canvas(width, height, title):
+    """
+    Creates and returns a drawing canvas of the given int size
+    """
+    top = tkinter.Tk()
+    top.minsize(width=width, height=height)
+    top.title(title)
+    canvas = tkinter.Canvas(top, width=width + 1, height=height + 1)
+    canvas.pack()
+    return canvas
+
+def hit_left_wall(canvas, object):
+    return get_left_x(canvas, object) <= 0
+
+def hit_top_wall(canvas, object):
+    return get_top_y(canvas, object) <= 0
+
+def hit_right_wall(canvas, object):
+    return get_right_x(canvas, object) >= CANVAS_WIDTH
+
+def hit_bottom_wall(canvas, object):
+    return get_bottom_y(canvas, object) >= CANVAS_HEIGHT
 
 def get_top_y(canvas, object):
     """
@@ -50,16 +92,14 @@ def get_left_x(canvas, object):
     """
     return canvas.coords(object)[0]
 
-def make_canvas(width, height, title):
-    """
-    Creates and returns a drawing canvas of the given int size
-    """
-    top = tkinter.Tk()
-    top.minsize(width=width, height=height)
-    top.title(title)
-    canvas = tkinter.Canvas(top, width=width + 1, height=height + 1)
-    canvas.pack()
-    return canvas
+def get_right_x(canvas, object):
+    return canvas.coords(object)[2]
+
+def get_bottom_y(canvas, object):
+    return canvas.coords(object)[3]
+
+
 
 if __name__ == '__main__':
     main()
+
