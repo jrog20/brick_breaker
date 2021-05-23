@@ -35,6 +35,34 @@ PADDLE_WIDTH = 80
 def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, "J's Brick Breaker")
 
+    for row in range(N_ROWS):
+        for col in range(N_COLS):
+            draw_brick(canvas, row, col)
+
+    load_ball(canvas)
+    canvas.mainloop()
+
+def draw_brick(canvas, row, col):
+    x = col * BRICK_WIDTH
+    y = row * BRICK_HEIGHT
+    color = get_color(row, col)
+    canvas.create_rectangle(x + SPACING, y + SPACING, x + BRICK_WIDTH, y + BRICK_HEIGHT, fill=color)
+
+def get_color(row, col):
+    return int_to_color(col * row * row)
+
+def int_to_color(value):
+    # white is the largest value one can represent
+    white_dec = int('ffffff', 16)
+    # change your value into "hexadecimal" representation
+    hex_str = format(value % white_dec, 'x')
+    # add 0s to the end until its the right length
+    while len(hex_str) < 6:
+        hex_str += '0'
+    # you now have a color!
+    return '#' + hex_str
+
+def load_ball(canvas):
     # Ball
     ball = canvas.create_oval(0, 0, BALL_SIZE, BALL_SIZE, fill='green', outline='green')
     change_x = CHANGE_X_START
@@ -42,16 +70,22 @@ def main():
     while True:
         # update world
         canvas.move(ball, change_x, change_y)
+        # if hit left or right wall, bounce off
         if hit_left_wall(canvas, ball) or hit_right_wall(canvas, ball):
             change_x *= -1
+        # NEED TO UPDATE: if hit a brick, break it and bounce back
         if hit_top_wall(canvas, ball) or hit_bottom_wall(canvas, ball):
             change_y *= -1
+        # NEED TO UPDATE: if hit bottom wall, game over
+
+        # NEED TO UPDATE: if hit paddle, bounce back
+
         # redraw canvas
         canvas.update()
         # pause
         time.sleep(1 / 50)
 
-    canvas.mainloop()
+    # canvas.mainloop()
 
 def make_canvas(width, height, title):
     """
@@ -62,6 +96,7 @@ def make_canvas(width, height, title):
     top.title(title)
     canvas = tkinter.Canvas(top, width=width + 1, height=height + 1)
     canvas.pack()
+    # canvas.bind("<Motion>", mouse_moved)
     return canvas
 
 def hit_left_wall(canvas, object):
@@ -98,8 +133,9 @@ def get_right_x(canvas, object):
 def get_bottom_y(canvas, object):
     return canvas.coords(object)[3]
 
+# def mouse_moved(event):
+#     print('x = ' + str(event.x), 'y = ' + str(event.y))
 
 
 if __name__ == '__main__':
     main()
-
