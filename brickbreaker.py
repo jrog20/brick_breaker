@@ -29,8 +29,9 @@ CHANGE_X_START = 10
 CHANGE_Y_START = 7
 
 # Constants for the paddle
-PADDLE_Y = CANVAS_HEIGHT - 40
 PADDLE_WIDTH = 80
+PADDLE_X = CANVAS_WIDTH // 2 - PADDLE_WIDTH // 2
+PADDLE_Y = CANVAS_HEIGHT - 50
 
 def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, "J's Brick Breaker")
@@ -39,8 +40,12 @@ def main():
         for col in range(N_COLS):
             draw_brick(canvas, row, col)
 
+    draw_paddle(canvas)
     load_ball(canvas)
     canvas.mainloop()
+
+def draw_paddle(canvas):
+    canvas.create_rectangle(PADDLE_X, PADDLE_Y, PADDLE_X + PADDLE_WIDTH, CANVAS_HEIGHT - 10, fill='black')
 
 def draw_brick(canvas, row, col):
     x = col * BRICK_WIDTH
