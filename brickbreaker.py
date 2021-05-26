@@ -79,10 +79,11 @@ def load_ball(canvas):
         if hit_left_wall(canvas, ball) or hit_right_wall(canvas, ball):
             change_x *= -1
         # NEED TO UPDATE: if hit a brick, break it and bounce back
-        if hit_top_wall(canvas, ball) or hit_bottom_wall(canvas, ball):
+        if hit_top_wall(canvas, ball):
             change_y *= -1
-        # NEED TO UPDATE: if hit bottom wall, game over
-
+        # if hit bottom wall, game over
+        if hit_bottom_wall(canvas, ball):
+            canvas.create_text(150, 300, anchor='w', font='Courier 52', text='Game Over')
         # NEED TO UPDATE: if hit paddle, bounce back
 
         # redraw canvas
